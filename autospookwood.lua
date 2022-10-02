@@ -1,4 +1,3 @@
-
 if game.PlaceId == 13822889 then
     
 if not game:IsLoaded() then game.Loaded:Wait() end
@@ -138,16 +137,20 @@ local UserInputService = game:GetService("UserInputService")
 
 end
 
+local WoodTypes = {"Spooky", "SpookyNeon"}
+    
 
-local Tree         
+local Tree
 
 for i,v in pairs(workspace:GetChildren()) do              
     if v.Name == "TreeRegion" then              
         for l, wood in pairs(v:GetChildren()) do            
-        if wood:FindFirstChild("TreeClass") then                  
-			if wood.TreeClass.Value == "Spooky" then              
+        if wood:FindFirstChild("TreeClass") then
+            for i, array in pairs(WoodTypes) do
+			if wood.TreeClass.Value == array then              
                 Tree = wood             
 				break
+				end
 			end
 		end
 	end

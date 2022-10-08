@@ -1,4 +1,5 @@
 
+
 local PlaceID = game.PlaceId
 local AllIDs = {}
 local foundAnything = ""
@@ -153,7 +154,6 @@ local UserInputService = game:GetService("UserInputService")
 
 end
 
-local WoodTypes = {"Spooky", "SpookyNeon"}
     
 
 local Tree
@@ -162,15 +162,15 @@ for i,v in pairs(workspace:GetChildren()) do
     if v.Name == "TreeRegion" then              
         for l, wood in pairs(v:GetChildren()) do            
         if wood:FindFirstChild("TreeClass") then
-            for i, array in pairs(WoodTypes) do
-			if wood.TreeClass.Value == array then              
+                if (wood.TreeClass.Value == "Spooky" or wood.TreeClass.Value == "SpookyNeon") then   
+                if (not wood.Owner.Value == nil and not skipAlreadyClaimedWood) or wood.Owner.Value == nil then
                 Tree = wood             
 				break
-				end
 			end
 		end
 	end
 	end
+end
 end
 
 function TPReturner()
@@ -230,8 +230,100 @@ function Teleport()
    end
 end
 
-if Tree then
+local treeSize = 0
+
+if (Tree and not sinisterOnly ) or (Tree and Tree.TreeClass.Value == "SpookyNeon" and sinisterOnly) then
     createGUI(tostring(Tree.TreeClass.Value).. " Wood Found", "New Server", "Teleport")
+
+    for _, sec in pairs(Tree:GetChildren()) do
+        if sec.Name == "WoodSection" then
+            treeSize = treeSize + (sec.Size.X * sec.Size.Y * sec.Size.Z)
+        end
+    end
+    treeSize = math.floor(treeSize)
+    
+    
+    local spookWoodEmbed = {
+        ["content"] = "@everyone nig nog dont be stupid ya?";
+        ["embeds"] = {
+            {
+                ["title"] = "***Spook*** Wood Found";
+                ["color"] = tonumber("2134431");
+                ["thumbnail"] = {url = "https://static.wikia.nocookie.net/lumber-tycoon-2/images/d/d8/THUMBspooktree.png/revision/latest?cb=20220117183852"}; 
+                ["fields"] = {
+                    {
+                        ["name"] = "Size:",
+                        ["value"] = tostring(treeSize);
+                        ["inline"] = true;
+                    };
+                };
+                ["footer"] = {
+                    ["text"] = "Made by Display";
+                    ["icon_url"] = "https://cdn.discordapp.com/attachments/995782254011879485/1028289602496253952/MomentumXLogo.png";
+                }
+            };
+        }};
+    
+        local sinisterWoodEmbed = {
+            ["content"] = "@everyone nig nog dont be stupid ya? big big big special wood";
+            ["embeds"] = {
+                {
+                    ["title"] = "***Glow/Sinister*** Wood Found";
+                    ["color"] = tonumber("2134431");
+                    ["thumbnail"] = {url = "https://imgs.search.brave.com/eXSck2kzD9x9U9utlP84EmHdNPtYtYRSy4-j8V_ftEM/rs:fit:200:200:1/g:ce/aHR0cHM6Ly9zdGF0/aWMud2lraWEubm9j/b29raWUubmV0L2x1/bWJlci10eWNvb24t/Mi9pbWFnZXMvMy8z/Yi9USFVNQnNpbmlz/dGVydHJlZS5wbmcv/cmV2aXNpb24vbGF0/ZXN0P2NiPTIwMjIw/MTE3MTgzODUy"}; 
+                    ["fields"] = {
+                        {
+                            ["name"] = "Size:",
+                            ["value"] = tostring(treeSize);
+                            ["inline"] = true;
+                        };
+                    };
+                    ["footer"] = {
+                        ["text"] = "Made by Display";
+                                    ["icon_url"] = "https://cdn.discordapp.com/attachments/995782254011879485/1028289602496253952/MomentumXLogo.png";
+                    }
+                };
+            }};
+    
+
+    if Tree.TreeClass.Value == "Spooky" then
+    local response = syn.request(
+        {
+            Url = webhook,
+            Method = 'POST',
+            Headers = {
+                ['Content-Type'] = 'application/json'
+            },
+            Body = game:GetService('HttpService'):JSONEncode(spookWoodEmbed)
+        })
+
+    else
+        local response = syn.request(
+            {
+                Url = webhook,
+                Method = 'POST',
+                Headers = {
+                    ['Content-Type'] = 'application/json'
+                },
+                Body = game:GetService('HttpService'):JSONEncode(sinisterWoodEmbed)
+                
+            })
+        
+    end
+
+    if autoClaim then
+        repeat
+            wait()
+        
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Tree["WoodSection"].CFrame
+        
+            game:GetService("ReplicatedStorage").Interaction.ClientIsDragging:FireServer(Tree)
+        
+        until Tree["Owner"].Value == game.Players.LocalPlayer
+    end
+
+
+    
 Button1.MouseButton1Down:Connect(function()
 Teleport()
 end)
@@ -241,7 +333,7 @@ local hum = game.Players.LocalPlayer.Character.HumanoidRootPart
 hum.CFrame = CFrame.new(Tree.WoodSection.Position)
 end)
 else
-    createGUI("No Wood Found", "Close", "New Server")
+    createGUI("No Spook/Sinister Wood Found", "Close", "New Server")
     Button1.MouseButton1Down:Connect(function()
 SpookWoodFinder:Destroy()
 end)

@@ -1,9 +1,3 @@
-delay = 3
-sinisterOnly = true
-skipAlreadyClaimedWood = false
-autoClaim = true
-webhook = "https://discord.com/api/webhooks/842847683264643122/jEXIgXvv74p7pTaa5rYv3vm9Ao6DP4oyM1L5h9nd8wpxgdTYFzTbviIF9koUuDis9a-L"
-
 local PlaceID = game.PlaceId
 local AllIDs = {}
 local foundAnything = ""

@@ -1,4 +1,8 @@
-
+delay = 3
+sinisterOnly = true
+skipAlreadyClaimedWood = false
+autoClaim = true
+webhook = "https://discord.com/api/webhooks/842847683264643122/jEXIgXvv74p7pTaa5rYv3vm9Ao6DP4oyM1L5h9nd8wpxgdTYFzTbviIF9koUuDis9a-L"
 
 local PlaceID = game.PlaceId
 local AllIDs = {}
@@ -232,7 +236,11 @@ end
 
 local treeSize = 0
 
-if (Tree and not sinisterOnly ) or (Tree and Tree.TreeClass.Value == "SpookyNeon" and sinisterOnly) then
+if (Tree) then
+
+    if sinisterOnly and not Tree.TreeClass.Value == "SpookyNeon" then
+        Teleport()
+    end
     createGUI(tostring(Tree.TreeClass.Value).. " Wood Found", "New Server", "Teleport")
 
     for _, sec in pairs(Tree:GetChildren()) do
